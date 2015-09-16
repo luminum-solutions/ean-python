@@ -70,3 +70,5 @@ pyvenv.cfg
 pip-selfcheck.json
 
 virtualenv-ean-api
+.idea
+*.iml
