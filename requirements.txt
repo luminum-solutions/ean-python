@@ -1,0 +1,4 @@
+nose
+mock
+urllib3
+Sphinx
