@@ -20,7 +20,7 @@ setup(
     description='A Python client for the EAN API.',
     long_description=long_description,
     zip_safe=False,
-    install_requires=[''],
+    install_requires=['nose', 'mock', 'sphinx', 'urllib3', 'django>=1.7'],
     classifiers=[
         'Intended Audience :: Developers',
         'Programming Language :: Python',
