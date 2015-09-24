@@ -16,7 +16,6 @@ setup(
     version=CURRENT_VERSION,
     author=u'Zowie Langdon',
     author_email='zowie@akoten.com',
-    packages=['ean_api'],
     url='https://github.com/Akoten/ean-api',
     license='None yet',
     description='A Python client for the EAN API.',
