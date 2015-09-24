@@ -1,0 +1,2 @@
+class ResourceMethodNotAllowed(Exception):
+    pass

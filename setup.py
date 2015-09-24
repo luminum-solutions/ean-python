@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from distutils.core import setup
 import sys
+from docs.conf import CURRENT_VERSION, REQUIRES
 
 PY_VERSION = sys.version_info[0], sys.version_info[1]
 
@@ -9,9 +10,10 @@ if PY_VERSION < (3, 0):
 else:
     long_description = open('README.md', encoding='utf-8').read()
 
+
 setup(
     name='ean-api',
-    version='0.1',
+    version=CURRENT_VERSION,
     author=u'Zowie Langdon',
     author_email='zowie@akoten.com',
     packages=['ean-api'],
@@ -20,7 +22,7 @@ setup(
     description='A Python client for the EAN API.',
     long_description=long_description,
     zip_safe=False,
-    install_requires=['nose', 'mock', 'sphinx', 'urllib3', 'django>=1.7'],
+    install_requires=REQUIRES,
     classifiers=[
         'Intended Audience :: Developers',
         'Programming Language :: Python',

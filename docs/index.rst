@@ -11,6 +11,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+.. automodule:: client
+
+.. autoclass:: APIClient
+    :members:
 
 
 Indices and tables

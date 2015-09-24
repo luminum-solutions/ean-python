@@ -2,6 +2,8 @@ from client import APIClient
 from django.test import TestCase
 from django.conf import settings
 import os
+import json
+
 
 os.environ["DJANGO_SETTINGS_MODULE"] = "tests.settings"
 
@@ -32,7 +34,8 @@ class APIClientTestCase(TestCase):
         """
         url = self.client.construct_url("hotel", action="list")
         print("Testing url: " + url)
-        self.client.request(url)
+        response = self.client.request(url)
+        self.assertEqual(response.status, 200)
 
     def test_resource_locator_creation(self):
         pass
