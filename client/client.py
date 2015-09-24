@@ -31,21 +31,27 @@ class APIClient(object):
 
     - `EAN_API_VERSION` (Default: 3): An integer representing the API version to use.
     - `EAN_API_DOMAIN`: (Default: `book.api.ean.com/ean-services/rs`): The EAN domain to do requests to.
-
-
+    - `EAN_API_CURRENCY`: (Default: `EUR`): The currency to use in requests
+    - `EAN_API_LOCALE`: (Default: `en_US`): The locale to use in requests
     """
 
     def __init__(self, protocol="https", domain="book.api.ean.com/ean-services/rs", api_version="3", api_key=None,
                  shared_secret=None, cid=None):
 
         if os.environ.get('DJANGO_SETTINGS_MODULE', None):  # If settings, get variables.
+            # Optional local vars
             settings_version = getattr(settings, 'EAN_API_VERSION', None)
             settings_protocol = getattr(settings, 'EAN_API_PROTOCOL', None)  # Not documented on purpose.
             settings_domain = getattr(settings, 'EAN_API_DOMAIN', None)
 
+            # Required instance variables
             self.cid = getattr(settings, 'EAN_API_CID', cid)
             self.api_key = getattr(settings, 'EAN_API_KEY', api_key)
             self.shared_secret = getattr(settings, 'EAN_SHARED_SECRET', shared_secret)
+
+            # Optional instance variables
+            self.locale = getattr(settings, 'EAN_API_LOCALE', 'en_US')
+            self.currency= getattr(settings, 'EAN_API_CURRENCY', 'EUR')
 
             if self.cid is None:
                 raise ValueError("No EAN_API_CID in settings, and no cid kwarg passed to APIClient()")
@@ -75,27 +81,25 @@ class APIClient(object):
         else:
             self.url = "%s://%s/__resource__/v%s" % (protocol, domain, api_version)
 
-    def construct_url(self, resource, action=None, locale='en_US', currency='EUR', extra_vars=None):
+    def construct_resource_url(self, resource, action=None, extra_vars={}):
 
         if not isinstance(resource, AbstractResource):
             raise RuntimeWarning(
                 "Resource passed does not inherit from AbstractResource. Might not implement necessary methods..")
 
-        xml = resource.construct_xml(action)
-
         # Construct the URL based on parameters. Use the base url defined in __init__
-        request_url = "%s/%s?cid=%s&minorRev=%s&apiKey=%s&sig=%s&locale=%s&currencyCode=%s%s%s" % (
+        request_url = "%s/%s?cid=%s&minorRev=%s&apiKey=%s&sig=%s&locale=%s&currencyCode=%s%s" % (
             self.url.replace('__resource__', str(resource)), action if action else "altProps", self.cid,
             self.minorRev if hasattr(self, "minorRev") else '99',
-            self.api_key, self.sig, locale,
-            currency, "&xml=" + xml, "/" if not extra_vars else "&")
+            self.api_key, self.sig, self.locale,
+            self.currency, "/" if not extra_vars else "&")
 
         # Add the extra variables to the URL
-        for key, value in extra_vars or []:
+        for key, value in extra_vars.items():
             request_url += "%s=%s&" % (key, value)
 
         # Strip last ampersand
-        if not extra_vars:
+        if not extra_vars == {}:
             request_url = request_url[:-1]
 
         return request_url

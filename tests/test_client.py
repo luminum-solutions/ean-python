@@ -10,12 +10,10 @@ class APIClientTestCase(TestCase):
     """
 
     def setUp(self):
-        class TempHotel(AbstractResource, Mock):
+
+        class TempHotel(AbstractResource):
             def __str__(self):
                 return "hotel"
-
-            def construct_xml(self, action):
-                return "<HotelListRequest><city>Seattle<%2Fcity><stateProvinceCode>WA<%2FstateProvinceCode><countryCode>US<%2FcountryCode><arrivalDate>10%2F20%2F2015<%2FarrivalDate><departureDate>10%2F22%2F2015<%2FdepartureDate><RoomGroup><Room><numberOfAdults>2<%2FnumberOfAdults><%2FRoom><%2FRoomGroup><numberOfResults>25<%2FnumberOfResults><%2FHotelListRequest>"
 
         self.client = APIClient()
         self.test_hotel = TempHotel()
@@ -25,11 +23,12 @@ class APIClientTestCase(TestCase):
 
     def test_do_request(self, manual_url=None):
         """Test a request directly"""
-        url = self.client.construct_url(self.test_hotel, action="list") or manual_url
+        url = self.client.construct_resource_url(self.test_hotel, action="list") or manual_url
+        print(url)
         response = self.client.request(url)
         self.assertEqual(response.status, 200)
 
     def test_resource_locator_creation(self):
         """Test that URL construction works properly"""
-        url = self.client.construct_url(self.test_hotel, action="list")
+        url = self.client.construct_resource_url(self.test_hotel, action="list")
         self.test_do_request(manual_url=url)
