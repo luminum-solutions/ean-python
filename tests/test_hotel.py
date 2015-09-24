@@ -15,11 +15,13 @@ class HotelResourceTestCase(TestCase):
         pass
 
     def test_manual_specified_client(self):
-        hotel_with_specified_client = Hotel(client=self.client)
+        """Test hotel Resource object creation with a manually specified APIClient instance"""
+        hotel_with_specified_client = Hotel(manual_client=self.client)
         self.assertEqual(hotel_with_specified_client.client, self.client,
                          "Client passed and the created client are not equal.")
 
     def test_manual_specified_client_kwargs(self):
+        """Test creation of the Hotel resource with manually specified settings through kwargs"""
         manual_client_args = {
             'protocol': 'https',
             'api_version': '3',
@@ -32,9 +34,13 @@ class HotelResourceTestCase(TestCase):
                               "Hotel client is not an instance of APICLient.")
 
     def test_get_single(self):
-        """Test a request."""
+        """Test getting a single hotel"""
         pass
 
     def test_list(self):
-        """Test a request."""
+        """Test getting a list of hotels"""
+        pass
+
+    def test_xml_construct(self):
+        """Test the construction of XML for the hotel resource"""
         pass

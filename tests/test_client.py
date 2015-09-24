@@ -1,11 +1,8 @@
 from client import APIClient
-from django.test import TestCase
-from django.conf import settings
-import os
-import json
+from unittest import TestCase
+from unittest.mock import Mock
+from resources.abstract_base import AbstractResource
 
-
-os.environ["DJANGO_SETTINGS_MODULE"] = "tests.settings"
 
 class APIClientTestCase(TestCase):
     """
@@ -13,33 +10,26 @@ class APIClientTestCase(TestCase):
     """
 
     def setUp(self):
+        class TempHotel(AbstractResource, Mock):
+            def __str__(self):
+                return "hotel"
+
+            def construct_xml(self, action):
+                return "<HotelListRequest><city>Seattle<%2Fcity><stateProvinceCode>WA<%2FstateProvinceCode><countryCode>US<%2FcountryCode><arrivalDate>10%2F20%2F2015<%2FarrivalDate><departureDate>10%2F22%2F2015<%2FdepartureDate><RoomGroup><Room><numberOfAdults>2<%2FnumberOfAdults><%2FRoom><%2FRoomGroup><numberOfResults>25<%2FnumberOfResults><%2FHotelListRequest>"
+
         self.client = APIClient()
+        self.test_hotel = TempHotel()
 
     def tearDown(self):
         pass
 
-    def test_with_django_settings_module(self):
-        """
-        Test that the API client correctly uses the settings
-        :return:
-        """
-        client = APIClient()
-        self.assertEqual(client.api_key, getattr(settings, "EAN_API_KEY"))
-        self.assertEqual(client.shared_secret, getattr(settings, "EAN_SHARED_SECRET"))
-
-    def test_do_request(self):
-        """
-        Test a request directly
-        :return:
-        """
-        url = self.client.construct_url("hotel", action="list")
-        print("Testing url: " + url)
+    def test_do_request(self, manual_url=None):
+        """Test a request directly"""
+        url = self.client.construct_url(self.test_hotel, action="list") or manual_url
         response = self.client.request(url)
         self.assertEqual(response.status, 200)
 
     def test_resource_locator_creation(self):
-        pass
-
-    def test_request(self):
-        """Test a request."""
-        pass
+        """Test that URL construction works properly"""
+        url = self.client.construct_url(self.test_hotel, action="list")
+        self.test_do_request(manual_url=url)

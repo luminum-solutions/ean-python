@@ -4,6 +4,7 @@ import urllib3
 import hashlib
 import time
 import certifi
+from resources.abstract_base import AbstractResource
 
 try:
     import ssl
@@ -57,7 +58,7 @@ class APIClient(object):
             urllib3.disable_warnings()
 
             self.http = urllib3.PoolManager(
-                cert_reqs='CERT_NONE',  # Force certificate check.
+                cert_reqs='CERT_NONE',  # Don't force certificate check.
                 ca_certs=certifi.where(),  # Path to the Certifi bundle.
             )
 
@@ -76,11 +77,15 @@ class APIClient(object):
 
     def construct_url(self, resource, action=None, locale='en_US', currency='EUR', extra_vars=None):
 
-        xml = self.construct_xml(action)
+        if not isinstance(resource, AbstractResource):
+            raise RuntimeWarning(
+                "Resource passed does not inherit from AbstractResource. Might not implement necessary methods..")
+
+        xml = resource.construct_xml(action)
 
         # Construct the URL based on parameters. Use the base url defined in __init__
         request_url = "%s/%s?cid=%s&minorRev=%s&apiKey=%s&sig=%s&locale=%s&currencyCode=%s%s%s" % (
-            self.url.replace('__resource__', resource), action if action else "altProps", self.cid,
+            self.url.replace('__resource__', str(resource)), action if action else "altProps", self.cid,
             self.minorRev if hasattr(self, "minorRev") else '99',
             self.api_key, self.sig, locale,
             currency, "&xml=" + xml, "/" if not extra_vars else "&")
@@ -97,5 +102,4 @@ class APIClient(object):
 
     def request(self, request_url):
         xml = self.http.request('GET', request_url, headers={'Accept': 'application/json, */*'})
-        print(xml)
         return xml

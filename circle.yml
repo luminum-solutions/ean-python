@@ -1,0 +1,9 @@
+machine:
+  timezone:
+    Europe/Amsterdam
+  python:
+    version: 3.4.2
+
+test:
+  override:
+    - ./manage.py test -v 2
