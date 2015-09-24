@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from distutils.core import setup
+from setuptools import setup
 import sys
 from docs.conf import CURRENT_VERSION, REQUIRES
 
