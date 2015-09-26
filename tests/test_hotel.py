@@ -46,8 +46,4 @@ class HotelResourceTestCase(TestCase):
         """Test getting a list of hotels"""
         response = self.hotel.list("Seattle", "WA", "US", "09/04/2016", "09/05/2016", (1,))
         self.assertEqual(response.status, 200, "Response was not OK (200)")
-        print(response.data)
-
-    def test_xml_construct(self):
-        """Test the construction of XML for the hotel resource"""
-        pass
+        # print(response.data)

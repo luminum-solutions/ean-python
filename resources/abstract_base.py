@@ -20,19 +20,25 @@ class AbstractResource(metaclass=ABCMeta):
         if not self.allow_create:
             raise ResourceMethodNotAllowed(
                 "The %s Resource does not allow a call to %s!" % (str(self.__class__), str(inspect.stack()[0][3])))
+        else:
+            raise NotImplementedError("%s method not implemented on this resource." % str(inspect.stack()[0][3]))
 
     def delete(self, *args, **kwargs):
         if not self.allow_delete:
             raise ResourceMethodNotAllowed(
                 "The %s Resource does not allow a call to %s!" % (str(self.__class__), str(inspect.stack()[0][3])))
+        else:
+            raise NotImplementedError("%s method not implemented on this resource." % str(inspect.stack()[0][3]))
 
     def update(self, *args, **kwargs):
         if not self.allow_update:
             raise ResourceMethodNotAllowed(
                 "The %s Resource does not allow a call to %s!" % (str(self.__class__), str(inspect.stack()[0][3])))
+        else:
+            raise NotImplementedError("%s method not implemented on this resource." % str(inspect.stack()[0][3]))
 
     def list(self, *args, **kwargs):
-        raise NotImplementedError("Every Resource should implement it's own all() method!")
+        raise NotImplementedError("Every Resource should implement it's own list() method!")
 
     def get(self, *args, **kwargs):
         raise NotImplementedError("Every Resource should implement it's own get() method!")

@@ -51,7 +51,7 @@ class APIClient(object):
 
             # Optional instance variables
             self.locale = getattr(settings, 'EAN_API_LOCALE', 'en_US')
-            self.currency= getattr(settings, 'EAN_API_CURRENCY', 'EUR')
+            self.currency = getattr(settings, 'EAN_API_CURRENCY', 'EUR')
 
             if self.cid is None:
                 raise ValueError("No EAN_API_CID in settings, and no cid kwarg passed to APIClient()")
@@ -92,18 +92,21 @@ class APIClient(object):
             self.url.replace('__resource__', str(resource)), action if action else "altProps", self.cid,
             self.minorRev if hasattr(self, "minorRev") else '99',
             self.api_key, self.sig, self.locale,
-            self.currency, "/" if not extra_vars else "&")
+            self.currency, "" if not extra_vars else "&")
 
         # Add the extra variables to the URL
-        for key, value in extra_vars.items():
+        for key, value in extra_vars.items() if (extra_vars is not None and len(extra_vars) > 2) else {}:
             request_url += "%s=%s&" % (key, value)
 
         # Strip last ampersand
-        if not extra_vars == {}:
+        if not extra_vars == {} and extra_vars is not None:
             request_url = request_url[:-1]
 
         return request_url
 
     def request(self, request_url):
         xml = self.http.request('GET', request_url, headers={'Accept': 'application/json, */*'})
+        if xml.getheader('Content-Type') == 'application/json':
+            data = xml.data.decode('utf-8')
+            xml.object = data
         return xml
